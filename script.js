@@ -122,55 +122,72 @@ function getDurations() {
 
 /** @type {number} */
 let cycleCount = 0;
+/** @type {number | null} */
+let phaseTimeoutId = null;
+/** @type {number | null} */
+let timerIntervalId = null;
+/** @type {number} */
+let currentPhaseIndex = 0;
+/** @type {number} */
+let phaseStartTime = 0;
+/** @type {number} */
+let phaseRemainingMs = 0;
 
 function resetCycleCount() {
     cycleCount = 0;
     counter.textContent = "0";
 }
 
-function startBreathingCycle() {
-    /** @type {number} */
-    let currentPhaseIndex = 0;
+function scheduleNextPhase() {
+    const durations = getDurations();
+    const phaseName = PHASES[currentPhaseIndex];
+    const duration = durations[phaseName];
 
-    function nextPhase() {
-        const durations = getDurations();
-        const phaseName = PHASES[currentPhaseIndex];
-        const duration = durations[phaseName];
-
-        // Skip phases with 0 duration
-        if (duration === 0) {
-            currentPhaseIndex = (currentPhaseIndex + 1) % PHASES.length;
-            nextPhase();
-            return;
-        }
-
-        // Set duration BEFORE applying phase (via CSS custom property)
-        circle.style.setProperty("--phase-duration", `${duration}s`);
-
-        // Force reflow to ensure transition picks up new duration
-        circle.offsetHeight;
-
-        document.body.dataset.phase = phaseName;
-        phaseLabel.textContent = PHASE_LABELS[phaseName];
-
-        if (currentPhaseIndex === 0) {
-            cycleCount++;
-            counter.textContent = String(cycleCount);
-        }
-
-        setTimeout(() => {
-            currentPhaseIndex = (currentPhaseIndex + 1) % PHASES.length;
-            nextPhase();
-        }, duration * 1000);
+    // Skip phases with 0 duration
+    if (duration === 0) {
+        currentPhaseIndex = (currentPhaseIndex + 1) % PHASES.length;
+        scheduleNextPhase();
+        return;
     }
 
-    nextPhase();
+    const durationMs = phaseRemainingMs > 0 ? phaseRemainingMs : duration * 1000;
+    phaseRemainingMs = 0;
+
+    // Set duration BEFORE applying phase (via CSS custom property)
+    circle.style.setProperty("--phase-duration", `${durationMs / 1000}s`);
+
+    // Force reflow to ensure transition picks up new duration
+    circle.offsetHeight;
+
+    document.body.dataset.phase = phaseName;
+    phaseLabel.textContent = PHASE_LABELS[phaseName];
+
+    if (currentPhaseIndex === 0 && phaseStartTime === 0) {
+        cycleCount++;
+        counter.textContent = String(cycleCount);
+    }
+
+    phaseStartTime = Date.now();
+
+    phaseTimeoutId = setTimeout(() => {
+        phaseStartTime = 0;
+        currentPhaseIndex = (currentPhaseIndex + 1) % PHASES.length;
+        scheduleNextPhase();
+    }, durationMs);
+}
+
+function startBreathingCycle() {
+    currentPhaseIndex = 0;
+    phaseRemainingMs = 0;
+    scheduleNextPhase();
 }
 
 startBreathingCycle();
 
 // Timer
 let timerStart = Date.now();
+/** @type {number} */
+let pausedElapsed = 0;
 
 /**
  * @param {number} seconds
@@ -187,10 +204,44 @@ function updateTimer() {
     timerOutput.textContent = formatTime(elapsed);
 }
 
-setInterval(updateTimer, 1000);
+timerIntervalId = setInterval(updateTimer, 1000);
 
 timerResetBtn.addEventListener("click", () => {
     timerStart = Date.now();
     resetCycleCount();
     updateTimer();
+});
+
+// Pause when tab is hidden
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        // Pause timer
+        pausedElapsed = Date.now() - timerStart;
+        if (timerIntervalId !== null) {
+            clearInterval(timerIntervalId);
+            timerIntervalId = null;
+        }
+
+        // Pause breathing cycle
+        if (phaseTimeoutId !== null) {
+            clearTimeout(phaseTimeoutId);
+            phaseTimeoutId = null;
+            phaseRemainingMs = Math.max(0, (getDurations()[PHASES[currentPhaseIndex]] * 1000) - (Date.now() - phaseStartTime));
+        }
+
+        // Pause CSS animation
+        circle.style.animationPlayState = "paused";
+        circle.style.transitionDuration = "0s";
+    } else {
+        // Resume timer
+        timerStart = Date.now() - pausedElapsed;
+        timerIntervalId = setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Resume CSS animation
+        circle.style.animationPlayState = "running";
+
+        // Resume breathing cycle
+        scheduleNextPhase();
+    }
 });

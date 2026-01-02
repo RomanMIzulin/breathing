@@ -3,64 +3,68 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>...</title>
+        <title>Breathing Exercise</title>
+        <link rel="stylesheet" href="style.css" />
     </head>
     <body>
-        <!--animdation-->
+        <header>
+            <h1>Breathing Exercise</h1>
+        </header>
         <main>
-            <div class="circle" role="img" aria-label="animation"></div>
-            <output name="counter" id="counter">counter of breaths</output>
-            <form id="settings">
-                <div>
-                    <label for="inhale_sec"
-                        >Inhale time in seconds with 0.1 precision</label
-                    >
-                    <input
-                        type="number"
-                        name="inhale"
-                        id="inhale_sec"
-                        min="0"
-                        step="0.1"
-                    />
-                </div>
-                <div>
-                    <label for="inhale_hold_sec"
-                        >Inhale hold time in seconds with 0.1 precision</label
-                    >
-                    <input
-                        type="number"
-                        name="inhale_hold"
-                        id="inhale_hold_sec"
-                        min="0"
-                        step="0.1"
-                    />
-                </div>
-                <div>
-                    <label for="exhale_sec"
-                        >Exhale time in seconds with 0.1 precision</label
-                    >
-                    <input
-                        type="number"
-                        name="exhale"
-                        id="exhale_sec"
-                        min="0"
-                        step="0.1"
-                    />
-                </div>
-                <div>
-                    <label for="exhale_hold_sec"
-                        >Exhale hold time in seconds with 0.1 precision</label
-                    >
-                    <input
-                        type="number"
-                        name="exhale_hold"
-                        id="exhale_hold_sec"
-                        min="0"
-                        step="0.1"
-                    />
-                </div>
-                <button type="submit">Save</button>
-            </form>
+            <div class="breathing">
+                <div class="circle" role="img" aria-label="animation"></div>
+                <output class="phase-label" id="phase-label"></output>
+            </div>
+            <output name="counter" id="counter">0</output>
+            <div class="timer-panel">
+                <output id="timer">0:00</output>
+                <button type="button" id="timer-reset">Reset</button>
+            </div>
+            <details id="settings-panel">
+                <summary>Settings</summary>
+                <form id="settings">
+                    <fieldset>
+                        <legend>Presets</legend>
+                        <div class="presets" role="radiogroup"></div>
+                    </fieldset>
+                    <div>
+                        <label for="inhale_sec">Inhale (sec)</label>
+                        <input type="number" name="inhale" id="inhale_sec" min="0" step="0.1" />
+                    </div>
+                    <div>
+                        <label for="inhale_hold_sec">Inhale hold (sec)</label>
+                        <input type="number" name="inhale_hold" id="inhale_hold_sec" min="0" step="0.1" />
+                    </div>
+                    <div>
+                        <label for="exhale_sec">Exhale (sec)</label>
+                        <input type="number" name="exhale" id="exhale_sec" min="0" step="0.1" />
+                    </div>
+                    <div>
+                        <label for="exhale_hold_sec">Exhale hold (sec)</label>
+                        <input type="number" name="exhale_hold" id="exhale_hold_sec" min="0" step="0.1" />
+                    </div>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="show_timer" checked />
+                        Show timer
+                    </label>
+                    <button type="submit">Save</button>
+                </form>
+            </details>
+            <nav class="quick-practice">
+                <span class="quick-label">Wim Hof:</span>
+                <a href="https://www.youtube.com/watch?v=tybOi4hjZFQ" target="_blank" rel="noopener" title="Guided Breathing Session">
+                    <svg class="yt-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12c0 2 .2 4 .5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.4-1.8.5-3.8.5-5.8 0-2-.2-4-.5-5.8zM9.5 15.5v-7l6.3 3.5-6.3 3.5z"/>
+                    </svg>
+                    3 rounds
+                </a>
+                <a href="https://www.youtube.com/watch?v=0BNejY1e9ik" target="_blank" rel="noopener" title="Extended Session">
+                    <svg class="yt-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12c0 2 .2 4 .5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.4-1.8.5-3.8.5-5.8 0-2-.2-4-.5-5.8zM9.5 15.5v-7l6.3 3.5-6.3 3.5z"/>
+                    </svg>
+                    5 rounds
+                </a>
+            </nav>
         </main>
         <script src="script.js"></script>
     </body>

@@ -1,23 +1,285 @@
 :root {
     --circle-size: 150px;
+    --inhale-duration: 4s;
+    --exhale-duration: 4s;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100dvh;
+    font-family: system-ui, sans-serif;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: oklch(95% 0.02 250);
+}
+
+header {
+    text-align: center;
+    padding-block: 1rem;
+}
+
+main {
+    display: grid;
+    place-items: center;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.breathing {
+    display: grid;
+    place-items: center;
+    position: relative;
 }
 
 .circle {
     width: var(--circle-size);
     height: var(--circle-size);
     border-radius: 50%;
-    background-color: skyblue;
-    transition: transform 2s, background 2s;
+    background: oklch(70% 0.12 250);
+    transition:
+        transform var(--phase-duration, 4s) ease-in-out,
+        background var(--phase-duration, 4s) ease-in-out;
 }
 
+.phase-label {
+    position: absolute;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: oklch(30% 0 0);
+    pointer-events: none;
+}
+
+/* Inhale - расширяется, синий */
 [data-phase="inhale"] .circle {
-  transform: scale(1.5);
-  background: lightblue;
+    transform: scale(1.5);
+    background: oklch(75% 0.15 250);
 }
-[data-phase="hold"] .circle {
-  background: lightgrey;
+
+/* Inhale hold - остаётся большим, приглушённый */
+[data-phase="inhale_hold"] .circle {
+    transform: scale(1.5);
+    background: oklch(70% 0.05 250);
 }
+
+/* Exhale - сжимается, тёплый */
 [data-phase="exhale"] .circle {
-  transform: scale(0.8);
-  background: greenyellow;
+    transform: scale(1);
+    background: oklch(80% 0.12 70);
+}
+
+/* Exhale hold - остаётся маленьким, приглушённый */
+[data-phase="exhale_hold"] .circle {
+    transform: scale(1);
+    background: oklch(75% 0.05 70);
+}
+
+#counter {
+    font-size: 2rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+
+.timer-panel {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: oklch(60% 0 0);
+    font-size: 0.875rem;
+}
+
+#timer {
+    font-variant-numeric: tabular-nums;
+    min-width: 4ch;
+}
+
+#timer-reset {
+    padding: 0.25rem 0.5rem;
+    background: transparent;
+    border: 1px solid oklch(80% 0 0);
+    border-radius: 0.25rem;
+    color: oklch(50% 0 0);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+#timer-reset:hover {
+    border-color: oklch(60% 0 0);
+    color: oklch(40% 0 0);
+}
+
+#settings-panel {
+    width: 100%;
+    max-width: 400px;
+}
+
+#settings-panel summary {
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    background: oklch(90% 0.02 250);
+    border-radius: 0.25rem;
+    font-weight: 500;
+    text-align: center;
+    list-style: none;
+    transition: background 0.15s;
+}
+
+#settings-panel summary::-webkit-details-marker {
+    display: none;
+}
+
+
+#settings-panel summary:hover {
+    background: oklch(85% 0.04 250);
+}
+
+#settings-panel[open] summary {
+    border-radius: 0.25rem 0.25rem 0 0;
+    margin-bottom: 0;
+}
+
+#settings-panel[open] #settings {
+    border: 1px solid oklch(90% 0.02 250);
+    border-top: none;
+    border-radius: 0 0 0.25rem 0.25rem;
+    padding-top: 1rem;
+}
+
+#settings {
+    display: grid;
+    gap: 1rem;
+    max-width: 400px;
+    width: 100%;
+    padding: 1rem;
+}
+
+#settings > div {
+    display: grid;
+    gap: 0.25rem;
+}
+
+#settings label {
+    font-size: 0.875rem;
+    color: oklch(40% 0 0);
+}
+
+#settings input {
+    padding: 0.5rem;
+    border: 1px solid oklch(80% 0 0);
+    border-radius: 0.25rem;
+    font-size: 1rem;
+}
+
+fieldset {
+    border: 1px solid oklch(80% 0 0);
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+}
+
+legend {
+    font-size: 0.875rem;
+    color: oklch(40% 0 0);
+    padding-inline: 0.25rem;
+}
+
+.presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.preset {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid oklch(80% 0 0);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.preset:hover {
+    background: oklch(92% 0.02 250);
+}
+
+.preset:has(input:checked) {
+    background: oklch(90% 0.08 250);
+    border-color: oklch(50% 0.15 250);
+}
+
+.preset input {
+    accent-color: oklch(50% 0.15 250);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    accent-color: oklch(50% 0.15 250);
+}
+
+#settings button {
+    padding: 0.75rem 1.5rem;
+    background: oklch(50% 0.15 250);
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#settings button:hover {
+    background: oklch(45% 0.15 250);
+}
+
+/* Quick Practice Links */
+.quick-practice {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.quick-label {
+    color: oklch(50% 0 0);
+}
+
+.quick-practice a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    text-decoration: none;
+    color: oklch(35% 0 0);
+    background: oklch(95% 0.01 250);
+    border: 1px solid oklch(85% 0.02 250);
+    border-radius: 2rem;
+    transition: all 0.15s;
+}
+
+.quick-practice a:hover {
+    background: oklch(92% 0.03 250);
+    border-color: oklch(75% 0.05 250);
+    transform: translateY(-1px);
+}
+
+.yt-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    fill: oklch(60% 0 0);
+}
+
+.quick-practice a:hover .yt-icon {
+    fill: oklch(45% 0 0);
 }

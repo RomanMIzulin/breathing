@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>...</title>
+    </head>
+    <body>
+        <!--animdation-->
+        <main>
+            <div class="circle" role="img" aria-label="animation"></div>
+            <output name="counter" id="counter">counter of breaths</output>
+            <form id="settings">
+                <div>
+                    <label for="inhale_sec"
+                        >Inhale time in seconds with 0.1 precision</label
+                    >
+                    <input
+                        type="number"
+                        name="inhale"
+                        id="inhale_sec"
+                        min="0"
+                        step="0.1"
+                    />
+                </div>
+                <div>
+                    <label for="inhale_hold_sec"
+                        >Inhale hold time in seconds with 0.1 precision</label
+                    >
+                    <input
+                        type="number"
+                        name="inhale_hold"
+                        id="inhale_hold_sec"
+                        min="0"
+                        step="0.1"
+                    />
+                </div>
+                <div>
+                    <label for="exhale_sec"
+                        >Exhale time in seconds with 0.1 precision</label
+                    >
+                    <input
+                        type="number"
+                        name="exhale"
+                        id="exhale_sec"
+                        min="0"
+                        step="0.1"
+                    />
+                </div>
+                <div>
+                    <label for="exhale_hold_sec"
+                        >Exhale hold time in seconds with 0.1 precision</label
+                    >
+                    <input
+                        type="number"
+                        name="exhale_hold"
+                        id="exhale_hold_sec"
+                        min="0"
+                        step="0.1"
+                    />
+                </div>
+                <button type="submit">Save</button>
+            </form>
+        </main>
+        <script src="script.js"></script>
+    </body>
+</html>

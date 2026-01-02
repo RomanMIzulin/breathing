@@ -1,0 +1,23 @@
+:root {
+    --circle-size: 150px;
+}
+
+.circle {
+    width: var(--circle-size);
+    height: var(--circle-size);
+    border-radius: 50%;
+    background-color: skyblue;
+    transition: transform 2s, background 2s;
+}
+
+[data-phase="inhale"] .circle {
+  transform: scale(1.5);
+  background: lightblue;
+}
+[data-phase="hold"] .circle {
+  background: lightgrey;
+}
+[data-phase="exhale"] .circle {
+  transform: scale(0.8);
+  background: greenyellow;
+}

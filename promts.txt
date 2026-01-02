@@ -1,0 +1,7 @@
+body
+- header
+- animation (emojis up, hold, down, hold)
+- counter of cycles
+- settings
+    - float sec for each inhale, hold, exhale, hold
+    - save button

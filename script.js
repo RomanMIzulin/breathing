@@ -29,9 +29,9 @@ const presetsContainer = /** @type {HTMLElement} */ (document.querySelector(".pr
 
 /** @type {Record<Phase, string>} */
 const PHASE_LABELS = {
-    inhale: "Inhale",
+    inhale: "In",
     inhale_hold: "Hold",
-    exhale: "Exhale",
+    exhale: "Out",
     exhale_hold: "Hold"
 };
 
@@ -229,17 +229,14 @@ document.addEventListener("visibilitychange", () => {
             phaseRemainingMs = Math.max(0, (getDurations()[PHASES[currentPhaseIndex]] * 1000) - (Date.now() - phaseStartTime));
         }
 
-        // Pause CSS animation
-        circle.style.animationPlayState = "paused";
-        circle.style.transitionDuration = "0s";
+       circle.style.transitionDuration = "0s";
     } else {
         // Resume timer
         timerStart = Date.now() - pausedElapsed;
         timerIntervalId = setInterval(updateTimer, 1000);
         updateTimer();
 
-        // Resume CSS animation
-        circle.style.animationPlayState = "running";
+        circle.style.transitionDuration = "";
 
         // Resume breathing cycle
         scheduleNextPhase();
